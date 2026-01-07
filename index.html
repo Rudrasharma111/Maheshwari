@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maheshwari Fertilizer Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- 1. GLOBAL LAYOUT --- */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #e0f2f1 0%, #a5d6a7 100%);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Full screen height */
+            overflow: hidden; /* Stop main body scroll */
+        }
+
+        .dashboard-container {
+            display: flex;
+            background: white;
+            width: 950px;
+            height: 650px; /* Fixed height container */
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            overflow: hidden;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        /* --- 2. LEFT SIDE (Fixed) --- */
+        .brand-panel {
+            width: 40%;
+            background: #2e7d32;
+            color: white;
+            padding: 50px 40px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .main-logo { width: 90px; margin-bottom: 25px; border-radius: 12px; }
+        .greeting-box h3 { font-size: 36px; margin: 5px 0 0 0; line-height: 1.2; }
+        .brand-tagline { font-size: 14px; opacity: 0.8; }
+        .circle-bg {
+            position: absolute; width: 300px; height: 300px;
+            background: rgba(255,255,255,0.1); border-radius: 50%;
+            bottom: -50px; right: -50px; pointer-events: none;
+        }
+
+        /* --- 3. RIGHT SIDE (Scrollable) --- */
+        .form-panel {
+            width: 60%;
+            padding: 0 50px; /* Padding on sides only */
+            background: white;
+            display: flex;
+            flex-direction: column;
+            /* REMOVED 'justify-content: center' so top doesn't get cut off */
+            overflow-y: auto; /* Enable Scroll inside this panel */
+            scroll-behavior: smooth;
+        }
+
+        /* --- 4. STICKY BOT HEADER --- */
+        /* This keeps the bot visible even when you scroll down! */
+        .bot-header-sticky {
+            position: sticky;
+            top: 0;
+            background: white; /* Covers content scrolling behind it */
+            z-index: 10;
+            padding-top: 40px; /* Space above bot */
+            padding-bottom: 10px; /* Space below bot */
+            margin-bottom: 10px;
+        }
+
+        .bot-wrapper { display: flex; align-items: flex-end; min-height: 60px; }
+        .bot-avatar {
+            font-size: 35px; background: #e8f5e9; width: 55px; height: 55px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            border: 2px solid #2e7d32; margin-right: 15px; animation: bounce 2s infinite;
+        }
+        .chat-bubble {
+            background: #2e7d32; color: white; padding: 15px 25px;
+            border-radius: 20px 20px 20px 0; font-size: 15px;
+            box-shadow: 0 5px 15px rgba(46, 125, 50, 0.2); opacity: 0;
+            transform: translateY(10px); transition: all 0.5s ease;
+        }
+        .chat-bubble.show { opacity: 1; transform: translateY(0); }
+        .cursor { display: inline-block; width: 2px; height: 14px; background: white; margin-left: 2px; }
+
+        /* --- 5. FORM ELEMENTS --- */
+        form { padding-bottom: 50px; } /* Extra space at bottom for scrolling */
+        
+        .form-title { color: #333; margin-bottom: 25px; font-weight: 800; font-size: 24px; }
+        .grid-row { display: flex; gap: 20px; margin-bottom: 15px; }
+        .input-group { margin-bottom: 15px; width: 100%; }
+        .input-group label { font-size: 12px; font-weight: 600; color: #555; display: block; margin-bottom: 5px; }
+        
+        input, textarea {
+            width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 10px;
+            font-family: 'Poppins', sans-serif; box-sizing: border-box; 
+        }
+        input:focus, textarea:focus { border-color: #2e7d32; outline: none; }
+
+        .btn-launch {
+            width: 100%; padding: 18px; margin-top: 10px;
+            background: #2e7d32; color: white; border: none; border-radius: 12px;
+            font-size: 16px; font-weight: bold; cursor: pointer; transition: transform 0.2s;
+        }
+        .btn-launch:hover { transform: scale(1.02); background: #1b5e20; }
+
+        /* Custom Scrollbar for Chrome/Safari/Edge */
+        .form-panel::-webkit-scrollbar { width: 8px; }
+        .form-panel::-webkit-scrollbar-track { background: transparent; }
+        .form-panel::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+        .form-panel::-webkit-scrollbar-thumb:hover { background: #2e7d32; }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes bounce { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+    </style>
+</head>
+<body>
+
+<div class="dashboard-container fade-in">
+    
+    <div class="brand-panel">
+        <div class="brand-content">
+            <img src="{{ url_for('static', filename='logo.bmp') }}" alt="Logo" class="main-logo floating">
+            <h1>Maheshwari<br>Fertilizers</h1>
+            <div class="greeting-box">
+                <span class="wave">👋</span>
+                <div class="greeting-text">
+                    <p>Welcome back,</p>
+                    <h3>Maheshwari</h3>
+                </div>
+            </div>
+            <p class="brand-tagline">Advanced Bulk Automation System 🚜</p>
+        </div>
+        <div class="circle-bg"></div>
+    </div>
+
+    <div class="form-panel">
+        
+        <div class="bot-header-sticky">
+            <div class="bot-wrapper">
+                <div class="bot-avatar">🤖</div>
+                <div class="chat-bubble" id="chatBox">
+                    <span id="typewriterText"></span><span class="cursor"></span>
+                </div>
+            </div>
+            
+            <div class="flash-area">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div style="padding: 10px; border-radius: 8px; margin-bottom: 10px; background: #ffebee; color: #c62828; text-align: center; border: 1px solid #ffcdd2;">
+                      {{ message }}
+                  </div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+            </div>
+        </div>
+
+        <form action="/" method="POST" enctype="multipart/form-data">
+            <h2 class="form-title">Start Campaign</h2>
+
+            <div class="grid-row">
+                <div class="input-group">
+                    <label>📂 Customer List (.txt)</label>
+                    <input type="file" name="numbers_file" accept=".txt" required class="custom-file-input">
+                </div>
+
+                <div class="input-group">
+                    <label>📸 Product Photos</label>
+                    <input type="file" name="photos" multiple accept="image/*" class="custom-file-input">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>✍️ Message Content</label>
+                <textarea name="message" placeholder="Type your message here..." rows="5"></textarea>
+            </div>
+
+            <div class="input-group">
+                <label>⚙️ Admin Mobile</label>
+                <input type="text" name="my_number" value="8982138233" required>
+            </div>
+
+            <button type="submit" class="btn-launch">
+                <span>🚀 Launch Automation</span>
+            </button>
+        </form>
+    </div>
+
+</div>
+
+<script>
+    window.onload = function() {
+        const chatBox = document.getElementById('chatBox');
+        const textSpan = document.getElementById('typewriterText');
+        
+        const hour = new Date().getHours();
+        let greeting = hour < 12 ? "Good Morning" : (hour < 18 ? "Good Afternoon" : "Good Evening");
+        const message = `${greeting} Maheshwari Ji! 👋 Ready to start a new campaign?`;
+
+        setTimeout(() => {
+            chatBox.classList.add('show');
+            let i = 0;
+            function typeWriter() {
+                if (i < message.length) {
+                    textSpan.textContent += message.charAt(i);
+                    i++;
+                    setTimeout(typeWriter, 50); 
+                }
+            }
+            typeWriter();
+        }, 500);
+    };
+</script>
+
+</body>
+</html>
